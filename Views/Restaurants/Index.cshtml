@@ -1,0 +1,36 @@
+﻿@model List<FoodHub.Models.Restaurant>
+@{
+    ViewData["Title"] = "Restaurants";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>🍔 Restaurants (@Model.Count)</h1>
+    <a asp-action="Create" class="btn btn-success">+ New restaurant</a>
+</div>
+
+<div class="row g-3">
+    @foreach (var r in Model)
+    {
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">@r.Name</h5>
+                    <p class="text-muted mb-1">@r.Category?.Icon @r.Category?.Name · ⭐ @r.AverageRating</p>
+                    <p class="mb-1">🛵 @r.DeliveryMinutes min · @r.DeliveryFee.ToString("0") EGP</p>
+
+                    @if (r.IsOpen)
+                    {
+                        <span class="badge bg-success">Open</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Closed</span>
+                    }
+                </div>
+                <div class="card-footer bg-white">
+                    <a asp-action="Details" asp-route-id="@r.Id" class="btn btn-sm btn-outline-primary">View Menu</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
