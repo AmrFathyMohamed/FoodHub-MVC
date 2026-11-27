@@ -1,36 +1,47 @@
-﻿@model List<FoodHub.Models.Restaurant>
+﻿@model List<Restaurant>
 @{
     ViewData["Title"] = "Restaurants";
+    var categories = (List<Category>)ViewBag.Categories;          // ViewBag = dynamic → لازم cast عشان IntelliSense و foreach
+    var current = ViewData["CurrentCategory"] as string;           // ViewData = object → as string (null لو مش موجود)
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>🍔 Restaurants (@Model.Count)</h1>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="m-0">🍔 Restaurants (@Model.Count)</h1>
     <a asp-action="Create" class="btn btn-success">+ New restaurant</a>
 </div>
+
+@* فورم GET: القيم بتروح في الـ Query String → ?category=pizza&q=corner
+   (GET مش POST → مفيش تعديل في الداتا، واللينك ينفع يتشير ويتعمله Bookmark) *@
+<form asp-action="Index" method="get" class="row g-2 mb-3">
+    @* نحافظ على الفلتر الحالي وإحنا بنبحث *@
+    <input type="hidden" name="category" value="@current" />
+    <div class="col-md-6">
+        <input type="search" name="q" value="@ViewData["Search"]" class="form-control" placeholder="Search restaurants..." />
+    </div>
+    <div class="col-auto"><button class="btn btn-primary">Search</button></div>
+</form>
+
+@* أزرار الفلتر (pills) — asp-route-category بيعمل ?category=slug لأنه مش جزء من الـ route pattern *@
+<div class="mb-4 d-flex flex-wrap gap-2">
+    <a asp-action="Index" class="btn btn-sm @(current is null ? "btn-dark" : "btn-outline-dark")">All</a>
+    @foreach (var c in categories)
+    {
+        <a asp-action="Index" asp-route-category="@c.Slug"
+           class="btn btn-sm @(c.Slug == current ? "btn-dark" : "btn-outline-dark")">@c.Icon @c.Name</a>
+    }
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-info">No restaurants match your search.</div>
+}
 
 <div class="row g-3">
     @foreach (var r in Model)
     {
         <div class="col-md-6 col-lg-3">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">@r.Name</h5>
-                    <p class="text-muted mb-1">@r.Category?.Icon @r.Category?.Name · ⭐ @r.AverageRating</p>
-                    <p class="mb-1">🛵 @r.DeliveryMinutes min · @r.DeliveryFee.ToString("0") EGP</p>
-
-                    @if (r.IsOpen)
-                    {
-                        <span class="badge bg-success">Open</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-secondary">Closed</span>
-                    }
-                </div>
-                <div class="card-footer bg-white">
-                    <a asp-action="Details" asp-route-id="@r.Id" class="btn btn-sm btn-outline-primary">View Menu</a>
-                </div>
-            </div>
+            @* Partial View: نفس الكارت بيتعاد استخدامه بدل ما نكرر الـ HTML *@
+            <partial name="_RestaurantCard" model="r" />
         </div>
     }
 </div>

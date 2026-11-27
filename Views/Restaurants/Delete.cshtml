@@ -1,0 +1,26 @@
+@model Restaurant
+@{
+    ViewData["Title"] = "Delete restaurant";
+}
+
+@* صفحة تأكيد (GET) — المسح الحقيقي بيحصل في الـ POST بس *@
+<h1 class="text-danger">Delete @Model.Name?</h1>
+<div class="alert alert-warning">
+    @* Cascade Delete: الأصناف والتقييمات بتتمسح مع المطعم *@
+    This will also delete <strong>@Model.MenuItems.Count</strong> menu items and all reviews.
+</div>
+
+@* HTML Helpers: DisplayNameFor بيقرا [Display(Name)] و DisplayFor بيقرا [DataType] — لسه بنستخدمهم في العرض *@
+<dl class="row">
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Category)</dt>
+    <dd class="col-sm-9">@Model.Category?.Name</dd>
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.Address)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Address)</dd>
+</dl>
+
+@* فورم POST على نفس الـ URL /Restaurants/Delete/2 → بيروح لـ DeleteConfirmed (ActionName("Delete"))
+   asp-action بيحط الـ Anti-forgery token تلقائي — من غيره [ValidateAntiForgeryToken] هيرجّع 400 *@
+<form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+    <button type="submit" class="btn btn-danger">Yes, delete</button>
+    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-link">Cancel</a>
+</form>

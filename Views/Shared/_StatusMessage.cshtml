@@ -1,0 +1,17 @@
+@* TempData: بيعيش لـ request واحد بعد الـ Redirect (PRG) — وبعد ما يتقري بيتمسح (F5 → الرسالة تختفي)
+   افتراضياً بيتخزن في Cookie
+   الـ Partial ده في Views/Shared → أي View أو Layout يقدر يستخدمه بالاسم بس *@
+@if (TempData["Success"] is string success)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        ✅ @success
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        ⚠️ @error
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}

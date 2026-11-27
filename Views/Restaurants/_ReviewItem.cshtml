@@ -1,0 +1,9 @@
+@model Review
+@* Partial View: تقييم واحد (Details) *@
+<div class="border rounded p-2 mb-2">
+    @* @(...) = Explicit expression: لازم الأقواس لما يبقى فيه عمليات (new string = نجمة مكررة Rating مرة) *@
+    <strong>@Model.CustomerName</strong> · @(new string('⭐', Model.Rating))
+    <small class="text-muted ms-2">@Model.CreatedAt.ToString("dd MMM yyyy")</small>
+    @* @Model.Comment بيتعمله HTML Encode تلقائي → لو حد كتب <script> هيظهر كنص (حماية XSS) *@
+    <div>@Model.Comment</div>
+</div>

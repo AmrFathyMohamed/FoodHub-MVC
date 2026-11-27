@@ -1,0 +1,13 @@
+@model MenuItem
+@* Partial View: صف واحد في جدول المنيو (Details) *@
+<tr>
+    <td>
+        @Model.Name
+        @if (Model.IsPopular)
+        {
+            <span class="badge bg-warning text-dark">🔥 Popular</span>
+        }
+    </td>
+    <td class="text-muted">@Model.Description</td>
+    <td class="text-end">@Model.Price.ToString("0") EGP</td>
+</tr>

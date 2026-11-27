@@ -1,0 +1,23 @@
+@model Restaurant
+@* Partial View: كارت المطعم — بنستخدمه في الـ Index وبعدين في البحث بالـ AJAX (Session 5)
+   الـ Partial مبيجيبش داتا بنفسه — الداتا بتوصله من برّه: <partial name="_RestaurantCard" model="r" /> *@
+<div class="card h-100 shadow-sm">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Name</h5>
+        @* ?. → لو الـ Category مش متحمّلة (null) مايضربش Exception *@
+        <p class="text-muted mb-1">@Model.Category?.Icon @Model.Category?.Name · ⭐ @Model.AverageRating (@Model.Reviews.Count)</p>
+        <p class="mb-2">🛵 @Model.DeliveryMinutes min · @Model.DeliveryFee.ToString("0") EGP</p>
+        @if (Model.IsOpen)
+        {
+            <span class="badge bg-success">Open</span>
+        }
+        else
+        {
+            <span class="badge bg-secondary">Closed</span>
+        }
+    </div>
+    <div class="card-footer bg-white">
+        @* asp-action من غير asp-controller → بياخد الـ Controller الحالي (Restaurants) *@
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-primary">View menu</a>
+    </div>
+</div>
