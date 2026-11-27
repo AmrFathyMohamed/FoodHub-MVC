@@ -1,0 +1,102 @@
+﻿@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+
+    // Tuple array → نلف عليه بـ foreach بدل ما نكرر HTML الكارت 4 مرات
+    var cards = new (string Label, string Value, string Icon)[]
+    {
+        ("Restaurants",   Model.Restaurants.ToString(),                 "🏪"),
+        ("Open now",      $"{Model.OpenNow} / {Model.Restaurants}",     "🟢"),
+        ("Orders today",  Model.OrdersToday.ToString(),                 "🧾"),
+        ("Revenue today", $"{Model.RevenueToday:N0} EGP",               "💰"),
+    };
+
+    // أكبر رقم في الأسبوع → عشان نحسب طول كل bar كنسبة مئوية منه
+    var maxOrders = Model.Week.Count == 0 ? 1 : Model.Week.Max(d => d.Orders);
+
+    // لون الـ badge حسب حالة الأوردر — switch expression
+    string StatusClass(string status) => status switch
+    {
+        "Pending" => "bg-warning text-dark",
+        "Preparing" => "bg-info text-dark",
+        "On the way" => "bg-primary",
+        "Delivered" => "bg-success",
+        _ => "bg-secondary"
+    };
+}
+
+@* ===== كروت الأرقام ===== *@
+<div class="row g-3 mb-4">
+    @foreach (var c in cards)
+    {
+        <div class="col-6 col-xl-3">
+            <div class="card stat-card shadow-sm border-0 h-100">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-icon">@c.Icon</div>
+                    <div>
+                        <div class="text-muted small">@c.Label</div>
+                        <div class="fs-4 fw-bold">@c.Value</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="row g-3">
+    @* ===== أوردرات آخر 7 أيام (bars بـ CSS بس — من غير مكتبة) ===== *@
+    <div class="col-lg-5">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white fw-semibold">Orders — last 7 days <span class="badge text-bg-light">demo</span></div>
+            <div class="card-body">
+                <div class="week-bars d-flex align-items-end gap-2">
+                    @foreach (var d in Model.Week)
+                    {
+                        @* الطول = نسبة الأوردرات من أكبر يوم · title بيظهر الرقم لما تقف بالماوس *@
+                        <div class="flex-fill d-flex flex-column align-items-center justify-content-end h-100">
+                            <small class="text-muted">@d.Orders</small>
+                            <div class="bar" style="height:@(d.Orders * 100 / maxOrders)%" title="@d.Day: @d.Orders orders"></div>
+                        </div>
+                    }
+                </div>
+                <div class="d-flex gap-2 mt-1">
+                    @foreach (var d in Model.Week)
+                    {
+                        <small class="flex-fill text-center text-muted">@d.Day</small>
+                    }
+                </div>
+            </div>
+            <div class="card-footer bg-white small text-muted">
+                🍽️ @Model.MenuItems menu items · ⭐ @Model.Reviews reviews
+            </div>
+        </div>
+    </div>
+
+    @* ===== آخر الأوردرات ===== *@
+    <div class="col-lg-7">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white fw-semibold">Recent orders <span class="badge text-bg-light">demo</span></div>
+            @* table-responsive → الجدول يعمل scroll جوه الكارت في الموبايل بدل ما يكسر الصفحة *@
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr><th>#</th><th>Customer</th><th>Restaurant</th><th class="text-end">Total</th><th>Status</th><th>Time</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var o in Model.RecentOrders)
+                        {
+                            <tr>
+                                <td class="text-muted">@o.Id</td>
+                                <td>@o.Customer</td>
+                                <td>@o.Restaurant</td>
+                                <td class="text-end">@o.Total.ToString("N0") EGP</td>
+                                <td><span class="badge @StatusClass(o.Status)">@o.Status</span></td>
+                                <td class="text-muted small">@o.PlacedAt.ToString("HH:mm")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

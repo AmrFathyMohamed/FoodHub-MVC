@@ -40,6 +40,11 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 
+// Area route لازم يبقى قبل الـ default
+// {area:exists} = Constraint (بنقطتين مش =) → الـ route ده يتطابق بس لو فيه Area بالاسم ده فعلاً (Admin)
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")

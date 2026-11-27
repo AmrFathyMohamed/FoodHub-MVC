@@ -1,0 +1,9 @@
+﻿@* _ViewImports: الـ usings والـ Tag Helpers دي بتتطبق على كل الـ Views اللي في الفولدر ده وتحته *@
+@using FoodHub
+@using FoodHub.Models
+@* Session 3: عشان نكتب @model RestaurantFormViewModel من غير الـ namespace كامل *@
+@using FoodHub.ViewModels
+@* ViewModels الخاصة بالـ Admin Area (DashboardViewModel ...) *@
+@using FoodHub.Areas.Admin.Models
+@* بيفعّل كل الـ Tag Helpers الجاهزة: asp-for, asp-action, asp-items, asp-validation-for ... *@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers

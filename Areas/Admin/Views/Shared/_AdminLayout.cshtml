@@ -1,0 +1,61 @@
+﻿@{
+    // الـ Controller الحالي → عشان نعلّم اللينك الـ active في الـ Sidebar
+    var controller = ViewContext.RouteData.Values["controller"] as string;
+    string Active(string name) => controller == name ? "active" : "";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FoodHub Admin</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    @* CSS خاص بالـ Admin بس — مش بيتحمّل في الموقع العادي *@
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+</head>
+<body class="admin">
+    @* Layout تاني منفصل عن _Layout الأساسي: Sidebar ثابت على الشمال + Topbar + المحتوى
+       بيتحدد في Areas/Admin/_ViewStart.cshtml → Layout = "_AdminLayout" *@
+    <div class="d-flex">
+
+        @* ===== Sidebar ===== (offcanvas-lg: ثابت في الشاشات الكبيرة، وبيتفتح كـ drawer في الموبايل) *@
+        <aside class="sidebar offcanvas-lg offcanvas-start text-bg-dark" tabindex="-1" id="adminSidebar">
+            @* مش بنستخدم offcanvas-header لأن Bootstrap بيخفيه في الشاشات الكبيرة *@
+            <div class="d-flex align-items-center p-3 border-bottom border-secondary">
+                @* asp-area="Admin" → اللينك يفضل جوه الـ Area *@
+                <a class="navbar-brand fw-bold text-white" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">🍔 FoodHub <small class="text-warning">Admin</small></a>
+                <button type="button" class="btn-close btn-close-white ms-auto d-lg-none" data-bs-dismiss="offcanvas" data-bs-target="#adminSidebar"></button>
+            </div>
+            <nav class="nav flex-column p-2">
+                <a class="nav-link @Active("Dashboard")" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">📊 Dashboard</a>
+                @* asp-area="" → نرجع للموقع الأساسي (صفحات الـ CRUD اللي عملناها في Session 3) *@
+                <a class="nav-link" asp-area="" asp-controller="Restaurants" asp-action="Index">🏪 Restaurants</a>
+                <a class="nav-link" asp-area="" asp-controller="Categories" asp-action="Index">🗂️ Categories</a>
+                <span class="nav-link disabled">🧾 Orders <small>(Session 6)</small></span>
+                <hr class="border-secondary" />
+                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">← Back to site</a>
+            </nav>
+        </aside>
+
+        <div class="flex-grow-1 min-vw-0">
+            @* ===== Topbar ===== *@
+            <header class="topbar d-flex align-items-center gap-2 px-3 py-2 border-bottom bg-white">
+                <button class="btn btn-outline-secondary btn-sm d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#adminSidebar">☰</button>
+                <h1 class="h5 m-0">@ViewData["Title"]</h1>
+                <span class="ms-auto text-muted small">👤 Admin</span>
+            </header>
+
+            <main class="p-3 p-md-4">
+                @* نفس Partial رسايل TempData من Views/Shared — الـ Area بتدوّر في Views/Shared الأساسي لو ملقتهوش عندها *@
+                <partial name="_StatusMessage" />
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @* أي View في الـ Area تقدر تضيف scripts بـ @section Scripts { } *@
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
